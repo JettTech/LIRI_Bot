@@ -17,7 +17,7 @@ var userInput = function(argOne, argTwo) { //NODE 'PIPELINE' FUNC.
 
 ////////////////////////////////////////////////////////
 ///////////////// FILE: "DO WHAT IT SAYS" FUNCTION ////////////////////////	
-function followMeFunction() {
+function followMeFunction( 	) {
 	fs.readFile("random.txt", "utf8", function(error, data) {
 	  if (error) {
 	    return console.log(error);
@@ -39,8 +39,16 @@ function followMeFunction() {
 ///////////////// MOVIE FUNCTION ////////////////////////	
 function movieDisplay(title="Mr. Nobody") {
 	//this.title = title || "Mr. Nobody";
+
+	if (title === "Mr. Nobody") {
+		console.log("You didn't choose a movie, so we chose for you! :-P  Better luck next time!!")
+	}
+
 	request('http://www.omdbapi.com/?apikey=40e9cece&t=' + title + "&y=&plot=short&r=json", function (error, response, body) {
-		if (error){
+		if (body.Title === undefined) {
+			console.log("That's not a movie we know... Try again!");
+		}
+		else if (error) {
 	  		console.log('error:', error); // Print the error if one occurred..
 	  		console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received..
 		}
@@ -95,6 +103,10 @@ var artistName = function (artist) { // !!!! REVIEW where ARTIST IS coming from.
 }
 
 function spotifyDisplay(song="The Sign") { //This will search the song that was piped in, IF PROVIDED, OR will set song to be "the sign," if NOTHING was PROVIDED!
+	if (song === "The Sign") {
+		console.log("You didn't choose a song, so we chose for you! ;-)  Better luck next time!!")
+	}
+
 	// var spotify = new Spotify(keys.spotifyKeys);
     var spotify = new Spotify({
         id: "90a2665fc487482fb24c43e541b53780",
@@ -102,7 +114,10 @@ function spotifyDisplay(song="The Sign") { //This will search the song that was 
     });
 
     spotify.search({ type: "track", query: song }, function(error, data) {
-        if (error){
+      	if (data === null) {
+			console.log("That's not a song we know... Try again!");
+		}
+		else if (error){
         	return console.log("Error occured! Check it out: " + error);
         }
         else {
@@ -112,7 +127,7 @@ function spotifyDisplay(song="The Sign") { //This will search the song that was 
             	console.log(" "); //THIS WILL GENEREATE A SPACE
             	console.log("--------------------------------------------------");
             	console.log(i+1)
-                console.log("Arists: " + data.tracks.items[i].artists.map( artistName ));
+                console.log("Arists: " + data.tracks.items[i].artists.map( artistName));
                 console.log("Song Name: " + data.tracks.items[i].name);
                 
                 if (data.tracks.items[i].preview_url == null) {

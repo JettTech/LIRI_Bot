@@ -1,0 +1,38 @@
+New Data Added: function (title) {
+				console.log("Finding your movie...");
+			    var bodyParsed = JSON.parse(body);
+
+			    // console.log(bodyParsed); //Basic Object Review
+
+			    // for (var i = 0; i < bodyParsed.length; i++) { //How do this search... if there are MULTIPLE MOVIES with the same title?
+			    console.log(" "); //THIS WILL GENEREATE A SPACE
+			    console.log("--------------------------------------------------");
+			    // console.log(i + 1);
+			    console.log(n += 1)
+			    console.log("Movie TitLe: " + bodyParsed.Title);
+			    console.log("Released: " + bodyParsed.Year);
+			    console.log("Rating: " + bodyParsed.Rated);
+	
+	           	if (bodyParsed.Ratings[1] == undefined) {
+	               	console.log("Rotten Tomatoes Rating: None available ")
+	          	}
+	          	else {
+	 	        	console.log("Rotten Tomatoes Rating: " + bodyParsed.Ratings[1].Value);
+	          	}
+
+			    console.log("Country of Origin: " + bodyParsed.Country);
+			    console.log("Languages Available: " + bodyParsed.Language);
+			    console.log("Plot " + bodyParsed.Plot);
+			    console.log("Actors: " + bodyParsed.Actors);
+			    console.log("--------------------------------------------------");
+			    // }
+
+			    fs.appendFile("log.txt", "New Data Added: " + movieResults, function(error) { //Testing out the EXTRA CREDIT FUNCTION... look more into
+					if(error){
+						return console.log("There is an FS error: " + error);
+					}
+					else{
+						console.log("The log.txt file has been updated with search contents.")
+					}
+				});
+			}

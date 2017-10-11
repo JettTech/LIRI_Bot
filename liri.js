@@ -1,13 +1,10 @@
 
-////////////////////////////////////////////////////////
 ///////////// SAVING 'REQUIRES' AS LOCAL VARS ///////////////
 var fs = require("fs"); //fs stands for file structure --> allows to write, read, append with native prop in node.
-var keys = require("./keys.js"); //console.log'ed "keys.js is loaded"
+//var keys = require("./keys.js"); //console.log'ed "keys.js is loaded"
 var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
 var request = require('request');
-
-// var pick = require('pick-function').default(); //HOW DO I USE THIS CORRECTLY??? //ALTERNATIVE METHOD
 
 
 ///////////// NODE CONTENT VARS /////////////////////////
@@ -18,6 +15,7 @@ var userInput = function(argOne, argTwo) { //NODE 'PIPELINE' FUNC.
 	userChoice(argOne, argTwo);
 }
 
+////////////////////////////////////////////////////////
 ///////////////// FILE: "DO WHAT IT SAYS" FUNCTION ////////////////////////	
 function followMeFunction() {
 	fs.readFile("random.txt", "utf8", function(error, data) {
@@ -29,11 +27,9 @@ function followMeFunction() {
 	  	var dataArray = data.split(","); //SPLITTING the content ON the COMMA!!!!
 	  	if (dataArray.length == 2) {
 	  		userInput(dataArray[0], dataArray[1])
-	  	// 	pick(dataArray[0], dataArray[1]); //HOW DO I USE THE "PICK" CORRECTLY??? //ALTERNATIVE METHOD.
 	  	}
 	  	else if (dataArray.length == 1) {
 			userInput(dataArray[0])
-	  	// 	pick(dataArray[0]); //HOW DO I USE THE "PICK" CORRECTLY??? //ALTERNATIVE METHOD
 
 	  	}
 	  }	  
@@ -41,15 +37,12 @@ function followMeFunction() {
 }
 
 ///////////////// MOVIE FUNCTION ////////////////////////	
-function movieDisplay(title) {
+function movieDisplay(title="Mr. Nobody") {
+	//this.title = title || "Mr. Nobody";
 	request('http://www.omdbapi.com/?apikey=40e9cece&t=' + title + "&y=&plot=short&r=json", function (error, response, body) {
 		if (error){
 	  		console.log('error:', error); // Print the error if one occurred..
 	  		console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received..
-		}
-		else if (body.Title == undefined) {
-			console.log("We could not find your movie choice.");
-			userInput("movie-this", "Mr. Nobody"); //WHY DOESN'T THIS WORK AS DEFAULT????
 		}
 		else {
 			var n = 0;
@@ -82,7 +75,7 @@ function movieDisplay(title) {
 			    console.log("--------------------------------------------------");
 			    // }
 
-			    fs.appendFile("log.txt", "New Data Added: " + movieResults, function(error) { //Testing out the EXTRA CREDIT FUNCTION... look into
+			    fs.appendFile("log.txt", "New Data Added: " + movieResults, function(error) { //Testing out the EXTRA CREDIT FUNCTION... look more into
 					if(error){
 						return console.log("There is an FS error: " + error);
 					}
@@ -142,12 +135,12 @@ function spotifyDisplay(song) {
 
 ///////////////// TWITTER FUNCTION ////////////////////////	
 function tweetDisplay() {
-	// var client = new Twitter(keys.twitterKeys); // !!!! THIS SHOULD BE THE SAME AS BELOW, AS THE INFO IS STORED IN KEYS.JS >> BUT NEITHER IS WORKING!!
+	//var client = new Twitter(keys.twitterKeys); // !!!! THIS SHOULD BE THE SAME AS BELOW, AS THE INFO IS STORED IN KEYS.JS >> BUT NEITHER IS WORKING!!
     var client = new Twitter({
-        consumer_key: "kjJ5Ag6CNEw0EbfYHjaI0jZj5",
-        consumer_secret: "h2yfNZ6FWWjHrmbRIcG4yqpdoE0V8NOhpxmKgCdsvxNWU2d5C8",
+        consumer_key: "BhFf2hobH0EcllnhN0RJOAd0D",
+        consumer_secret: "E119h9zgCtNEdFPh5waGtWseRHNJUOdok2U4HLksBa4qsJp2XF",
         access_token_key: "720340163725959168-ATPAvxKVU59ybMi3dvGpOcPG2elBor7",
-        access_token_secret: "4MQ9HNo5pFMiN38cKNxR88E4uJAC5qCx2iA0qOEtixvCX",
+        access_token_secret: "4MQ9HNo5pFMiN38cKNxR88E4uJAC5qCx2iA0qOEtixvCX"
     });
     var params = {screen_name: "jettTech"};
 
@@ -181,7 +174,7 @@ function userChoice (actionChoice, dataResponse) {
 			spotifyDisplay(dataResponse);				
 			break;
 		case "movie-this":
-			movieDisplay(dataResponse);			
+			movieDisplay(dataResponse);	//FIGURE OUT WHAT TO DO WHEN THE SONG IS MUTIPLE NAMES/WORDS!		
 			break;
 		case "do-what-it-says":
 			followMeFunction();

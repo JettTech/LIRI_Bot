@@ -94,7 +94,7 @@ var artistName = function (artist) { // !!!! REVIEW where ARTIST IS coming from.
 	return artist.name;
 }
 
-function spotifyDisplay(song) {
+function spotifyDisplay(song="The Sign") { //This will search the song that was piped in, IF PROVIDED, OR will set song to be "the sign," if NOTHING was PROVIDED!
 	// var spotify = new Spotify(keys.spotifyKeys);
     var spotify = new Spotify({
         id: "90a2665fc487482fb24c43e541b53780",
@@ -102,11 +102,7 @@ function spotifyDisplay(song) {
     });
 
     spotify.search({ type: "track", query: song }, function(error, data) {
-        if (!song) { 
-        	song = "The Sign"; // !!!! WHY IS THIS NOT RESPONDING...????
-        	spotifyDisplay(song);
-        }
-        else if (error){
+        if (error){
         	return console.log("Error occured! Check it out: " + error);
         }
         else {

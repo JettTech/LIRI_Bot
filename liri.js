@@ -1,7 +1,7 @@
 
 ///////////// SAVING 'REQUIRES' AS LOCAL VARS ///////////////
 var fs = require("fs"); //fs stands for file structure --> allows to write, read, append with native prop in node.
-//var keys = require("./keys.js"); //console.log'ed "keys.js is loaded"
+var keys = require("./keys.js"); //console.log'ed "keys.js is loaded"
 var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
 var request = require('request');
@@ -35,64 +35,75 @@ function followMeFunction( 	) {
 	  }	  
 	 });
 }
+/////////////// WRITE TO LOG.TXT FUNCTION ////////////////////////////
+var writeToLog = function(dataResults) {
+  fs.appendFile("log.txt", "\r\n\r\n"); //This will generate an empty space between the logged characters!!
+
+  //PERSONAL NOTE for above: \r = CR (Carriage Return) // Used as a new line character in Mac OS before X
+  	  // \n = LF (Line Feed) // Used as a new line character in Unix/Mac OS X
+	  // \r\n = CR + LF // Used as a new line character in Windows
+
+  fs.appendFile("log.txt", JSON.stringify(dataResults), function(err) {
+    if (err) {
+      return console.log(err);
+    }
+
+    console.log("log.txt was updated!");
+  });
+};
 
 ///////////////// MOVIE FUNCTION ////////////////////////	
 function movieDisplay(title="Mr. Nobody") {
 	//this.title = title || "Mr. Nobody";
-
 	if (title === "Mr. Nobody") {
 		console.log("You didn't choose a movie, so we chose for you! :-P  Better luck next time!!")
 	}
 
 	request('http://www.omdbapi.com/?apikey=40e9cece&t=' + title + "&y=&plot=short&r=json", function (error, response, body) {
-		if (body.Title === undefined) {
-			console.log("That's not a movie we know... Try again!");
-		}
-		else if (error) {
+		// if (body.Ratings === null) { //!!!REWORK THIS!!!
+		// 	console.log("That's not a movie we know... Try again!");
+		// 	return;
+		// }
+		// else if (error) {
+		if (error) {
 	  		console.log('error:', error); // Print the error if one occurred..
 	  		console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received..
 		}
 		else {
-			var n = 0;
-			var movieResults = function(title) {
-				console.log("Finding your movie...");
-			    var bodyParsed = JSON.parse(body);
-
-			    // console.log(bodyParsed); //Basic Object Review
-
-			    // for (var i = 0; i < bodyParsed.length; i++) { //How do this search... if there are MULTIPLE MOVIES with the same title?
-			    console.log(" "); //THIS WILL GENEREATE A SPACE
-			    console.log("--------------------------------------------------");
-			    // console.log(i + 1);
-			    console.log(n += 1)
-			    console.log("Movie TitLe: " + bodyParsed.Title);
-			    console.log("Released: " + bodyParsed.Year);
-			    console.log("Rating: " + bodyParsed.Rated);
-	
-	           	if (bodyParsed.Ratings[1] == undefined) {
-	               	console.log("Rotten Tomatoes Rating: None available ")
-	          	}
-	          	else {
-	 	        	console.log("Rotten Tomatoes Rating: " + bodyParsed.Ratings[1].Value);
-	          	}
-
-			    console.log("Country of Origin: " + bodyParsed.Country);
-			    console.log("Languages Available: " + bodyParsed.Language);
-			    console.log("Plot " + bodyParsed.Plot);
-			    console.log("Actors: " + bodyParsed.Actors);
-			    console.log("--------------------------------------------------");
-			    // }
-
-			    fs.appendFile("log.txt", "New Data Added: " + movieResults, function(error) { //Testing out the EXTRA CREDIT FUNCTION... look more into
-					if(error){
-						return console.log("There is an FS error: " + error);
-					}
-					else{
-						console.log("The log.txt file has been updated with search contents.")
-					}
-				});
+			var num = 0;
+			console.log("Finding your movie...");
+			var bodyParsed = JSON.parse(body);
+			// console.log(bodyParsed); //Basic Object Review
+			
+			var dataResults = {
+			   	NUMBER: num += 1,
+			    TITLE: bodyParsed.Title,
+			    RELEASED: bodyParsed.Year,
+			    RATING: bodyParsed.Rated,
+			    ORIGIN: bodyParsed.Country,
+			    LANGUAGES: bodyParsed.Language,
+			    ACTORS: bodyParsed.Actors,			    
+			    PLOT: bodyParsed.Plot,
 			}
-			movieResults();
+			writeToLog(dataResults);
+
+		    console.log(" "); //THIS WILL GENEREATE A SPACE
+		    console.log("--------------------------------------------------");
+		    console.log(dataResults.NUMBER);
+		    console.log("Movie TitLe: " + dataResults.TITLE);
+		    console.log("Released: " + dataResults.RELEASED);
+		    console.log("Rating: " + dataResults.RATING);
+	       	if (bodyParsed.Ratings[1] == undefined) {
+	          	console.log("Rotten Tomatoes Rating: None available ");
+	      	}
+	      	else {
+	        	console.log("Rotten Tomatoes Rating: " + bodyParsed.Ratings[1].Value);
+         	}
+		    console.log("Country of Origin: " + dataResults.ORIGIN);
+		    console.log("Languages Available: " + dataResults.LANGUAGES);
+		    console.log("Actors: " + dataResults.ACTORS);		    
+		    console.log("Plot: " + dataResults.PLOT);
+		    console.log("--------------------------------------------------");
 		}
 	});
 }
@@ -107,42 +118,56 @@ function spotifyDisplay(song="The Sign") { //This will search the song that was 
 		console.log("You didn't choose a song, so we chose for you! ;-)  Better luck next time!!")
 	}
 
-	// var spotify = new Spotify(keys.spotifyKeys);
+	// var spotify = new Spotify(keys.spotifyKeys); //!!!!!ASK COLE... WHY DOES THIS NOT WORK.
     var spotify = new Spotify({
         id: "90a2665fc487482fb24c43e541b53780",
 		secret: "a353766e92b548038006db75f9139391",
     });
 
     spotify.search({ type: "track", query: song }, function(error, data) {
-      	if (data === null) {
+      	if (data.tracks.total === 0) {
 			console.log("That's not a song we know... Try again!");
+			return;
 		}
 		else if (error){
         	return console.log("Error occured! Check it out: " + error);
         }
         else {
             console.log("Searching your song...");
+            console.log(data);
             // console.log(data.tracks.items[0]); //Basic Object Review
-            for (var i = 0; i < data.tracks.items.length; i++) {
-            	console.log(" "); //THIS WILL GENEREATE A SPACE
-            	console.log("--------------------------------------------------");
-            	console.log(i+1)
-                console.log("Arists: " + data.tracks.items[i].artists.map( artistName));
-                console.log("Song Name: " + data.tracks.items[i].name);
-                
-                if (data.tracks.items[i].preview_url == null) {
-                	console.log("Preview URL: None available ")
-                }
-                else {
-                	console.log("Preview URL: " + data.tracks.items[i].preview_url);
-                }
 
-		  		console.log("Album Name: " + data.tracks.items[i].album.name);
-		  		console.log("--------------------------------------------------");
+            var dataArr = [];
+            for (var i = 0; i < data.tracks.items.length; i++) {
+            	dataArr.push({
+	            	NUMBER: i+1,
+	      			ARTIST: data.tracks.items[i].artists.map(artistName),
+				    SONG: data.tracks.items[i].name,
+				    // URL: data.tracks.items[i].preview_url,			    
+				    ALBUM: data.tracks.items[i].album.name,
+            	})
             }
+            writeToLog(dataArr);
+
+            for (var i = 0; i < data.tracks.items.length; i++) {
+	            console.log(" "); //THIS WILL GENEREATE A SPACE
+	           	console.log("--------------------------------------------------");
+	           	console.log(dataArr.NUMBER)
+	     	    console.log("Arists: " + dataArr.ARTIST);
+	       	    console.log("Song Name: " + dataArr.SONG);
+	           	if (data.tracks.items[i].preview_url === null) {
+	              	console.log("Preview URL: None available ")
+	         	}
+	            else {
+	             	console.log("Preview URL: " + data.tracks.items[i].preview_url);
+	   	       }
+			  	console.log("Album Name: " + dataArr.ALBUM);
+			  	console.log("--------------------------------------------------");	  	
+        	}
         }
     });
 }
+
 
 ///////////////// TWITTER FUNCTION ////////////////////////	
 function tweetDisplay() {
@@ -153,7 +178,7 @@ function tweetDisplay() {
         access_token_key: "720340163725959168-ATPAvxKVU59ybMi3dvGpOcPG2elBor7",
         access_token_secret: "4MQ9HNo5pFMiN38cKNxR88E4uJAC5qCx2iA0qOEtixvCX"
     });
-    var params = {screen_name: "jettTech"};
+    var params = {screen_name: "jettTech", count: 20};
 
     client.get("statuses/user_timeline", params, function(error, tweets, response) {
         console.log("trying to tweet...")
@@ -162,14 +187,23 @@ function tweetDisplay() {
         } 
         else {
             console.log("Finding your tweets...");
+
+            var dataArr = [];
             for (var i = 0; i < tweets.length; i++) {
-         		console.log(" "); //THIS WILL GENEREATE A SPACE
-            	console.log("--------------------------------------------------");
-                console.log(i+1);
-                console.log("Time of Tweet: " + tweets[i].created_at);
-                console.log("Tweet Content: " + tweets[i].text);
-                console.log("--------------------------------------------------");
+            	dataArr.push({
+	                NUMBER: i+1,
+	                TIME: tweets[i].created_at,
+	                CONTENT: tweets[i].text,
+            	});
             }
+            writeToLog(dataArr);
+
+            console.log(" "); //THIS WILL GENEREATE A SPACE
+	       	console.log("--------------------------------------------------");
+	      	console.log(dataArr.NUMBER);
+			console.log("Time of Tweet: " + dataArr.TIME);
+	      	console.log("Tweet Content: " + dataArr.CONTENT);
+	      	console.log("--------------------------------------------------")
         }
     });
 }

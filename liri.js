@@ -136,7 +136,7 @@ function spotifyDisplay(song="The Sign") { //This will search the song that was 
         else {
             console.log("Searching your song...");
             // console.log(data); //Basic Object Review
-            console.log(data.tracks.items[0]); //Basic Object Review
+            // console.log(data.tracks.items[0]); //Basic Object - index position "0" Review;
 
             var dataArr = [];
             for (var i = 0; i < data.tracks.items.length; i++) {

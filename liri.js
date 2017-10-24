@@ -5,6 +5,7 @@ var keys = require("./keys.js"); //console.log'ed "keys.js is loaded"
 var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
 var request = require('request');
+var moment = require('moment');
 
 
 ///////////// NODE CONTENT VARS /////////////////////////
@@ -43,7 +44,7 @@ var writeToLog = function(dataResults) {
   	  // \n = LF (Line Feed) // Used as a new line character in Unix/Mac OS X
 	  // \r\n = CR + LF // Used as a new line character in Windows
 
-  fs.appendFile("log.txt", JSON.stringify(dataResults), function(err) {
+fs.appendFile("log.txt", JSON.stringify(dataResults), function(err) {
     if (err) {
       return console.log(err);
     }
@@ -109,7 +110,7 @@ function movieDisplay(title="Mr. Nobody") {
 }
 
 //////////// SPOTIFY FUNCTION/////////////////////////////
-var artistName = function (artist) { // !!!! REVIEW where ARTIST IS coming from...
+var artistName = function (artist) { // !!!! artist is the parameter that allows whatever work (artist) is pushed into the function in a different scope, to be plugged into this function and run accordingly.
 	return artist.name;
 }
 
@@ -134,8 +135,8 @@ function spotifyDisplay(song="The Sign") { //This will search the song that was 
         }
         else {
             console.log("Searching your song...");
-            console.log(data);
-            // console.log(data.tracks.items[0]); //Basic Object Review
+            // console.log(data); //Basic Object Review
+            console.log(data.tracks.items[0]); //Basic Object Review
 
             var dataArr = [];
             for (var i = 0; i < data.tracks.items.length; i++) {
@@ -152,16 +153,16 @@ function spotifyDisplay(song="The Sign") { //This will search the song that was 
             for (var i = 0; i < data.tracks.items.length; i++) {
 	            console.log(" "); //THIS WILL GENEREATE A SPACE
 	           	console.log("--------------------------------------------------");
-	           	console.log(dataArr.NUMBER)
-	     	    console.log("Arists: " + dataArr.ARTIST);
-	       	    console.log("Song Name: " + dataArr.SONG);
+	           	console.log(i+1) //why does referencing "dataArr.NUMBERS" (instead of rewriting above) NOT WORK (...and the same for the following?)!!!!!
+	     	    console.log("Arists: " + data.tracks.items[i].artists.map(artistName));
+	       	    console.log("Song Name: " + data.tracks.items[i].name);
 	           	if (data.tracks.items[i].preview_url === null) {
 	              	console.log("Preview URL: None available ")
 	         	}
 	            else {
 	             	console.log("Preview URL: " + data.tracks.items[i].preview_url);
 	   	       }
-			  	console.log("Album Name: " + dataArr.ALBUM);
+			  	console.log("Album Name: " + data.tracks.items[i].album.name);
 			  	console.log("--------------------------------------------------");	  	
         	}
         }
@@ -178,7 +179,7 @@ function tweetDisplay() {
         access_token_key: "720340163725959168-ATPAvxKVU59ybMi3dvGpOcPG2elBor7",
         access_token_secret: "4MQ9HNo5pFMiN38cKNxR88E4uJAC5qCx2iA0qOEtixvCX"
     });
-    var params = {screen_name: "jettTech", count: 20};
+    var params = {screen_name: "jetton_Lisa", count: 20};
 
     client.get("statuses/user_timeline", params, function(error, tweets, response) {
         console.log("trying to tweet...")
@@ -190,20 +191,22 @@ function tweetDisplay() {
 
             var dataArr = [];
             for (var i = 0; i < tweets.length; i++) {
+            	// var date = moment(tweets[i].created_at, "YYYY-MM-DD HH:mm"); //Ask TA how to integrate Moments.js to change Date Format/Displayed
             	dataArr.push({
 	                NUMBER: i+1,
-	                TIME: tweets[i].created_at,
+	                TIME: tweets[i].created_at, //"date" --> once the moments npm string structure is configured properly
 	                CONTENT: tweets[i].text,
             	});
             }
             writeToLog(dataArr);
-
-            console.log(" "); //THIS WILL GENEREATE A SPACE
-	       	console.log("--------------------------------------------------");
-	      	console.log(dataArr.NUMBER);
-			console.log("Time of Tweet: " + dataArr.TIME);
-	      	console.log("Tweet Content: " + dataArr.CONTENT);
-	      	console.log("--------------------------------------------------")
+            for (var i = 0; i < tweets.length; i++) {
+	            console.log(" "); //THIS WILL GENEREATE A SPACE
+		       	console.log("--------------------------------------------------");
+		      	console.log(dataArr[i].NUMBER);
+				console.log("Time of Tweet: " + dataArr[i].TIME);
+		      	console.log("Tweet Content: " + dataArr[i].CONTENT);
+		      	console.log("--------------------------------------------------")
+		   	}
         }
     });
 }

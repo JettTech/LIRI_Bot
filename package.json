@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/JettTech/LIRI_Bot#readme",
   "dependencies": {
+    "moment": "^2.19.1",
     "node-spotify-api": "^1.0.7",
     "pick-function": "0.0.5",
     "request": "^2.83.0",

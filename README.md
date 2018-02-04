@@ -3,6 +3,8 @@ A command line Node.js application named LIRI. LIRI stands for Language Interpre
 
 ![](https://media.giphy.com/media/rfrorH5zTvZpC/giphy.gif)
 
+![Alt text](./public/images/SCREENSHOT_img_GOES_HERE.png?raw=true "Optional Title")
+
 # liri-node-app
 
 In this assignment, I made a command line node application called LIRI. 
